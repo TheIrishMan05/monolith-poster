@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - include:
+      file: 001-create-users.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 002-create-events.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 003-create-tags.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 004-create-event-tags.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 005-create-ticket-types.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 006-create-orders.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 007-create-order-items.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 008-create-tickets.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 009-create-seats.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 010-seed-users.yaml
+      relativeToChangelogFile: true
