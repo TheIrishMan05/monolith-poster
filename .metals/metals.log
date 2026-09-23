@@ -15877,3 +15877,187 @@ WARNING: Unmatched cancel notification for request id 271
 2026.09.22 22:06:28 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java. Using fallback presentation compiler.
 2026.09.22 22:06:28 WARN  no build target for: C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java
 2026.09.22 22:06:28 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java. Using fallback presentation compiler.
+2026.09.23 00:16:01 INFO  Shutting down server
+2026.09.23 00:16:01 INFO  Memory monitor stopped
+2026.09.23 00:16:01 INFO  shutting down Metals
+2026.09.23 00:16:01 INFO  Exiting server
+2026.09.23 00:16:01 ERROR Unexpected error initializing server: 
+org.eclipse.lsp4j.jsonrpc.ResponseErrorException: Request window/showMessageRequest failed with message: Canceled
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleResponse(RemoteEndpoint.java:214)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:198)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:189)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:97)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:97)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.lang.Thread.run(Thread.java:1583)
+
+2026.09.23 12:02:14 INFO  Started: Metals version 1.6.9 in folders 'C:\Users\grigo\study\highload_apps\monolith-poster' for client Visual Studio Code 1.138.0.
+2026.09.23 12:02:15 INFO  time: initialize in 0.19s
+2026.09.23 12:02:14 INFO  Memory monitor started
+2026.09.23 12:02:19 WARN  Using H2 2.5.250 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.09.23 12:02:23 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:02:36 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:02:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\TicketStatus.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\user\UpdateRoleRequest.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\user\UpdateUserRequest.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\OrderStatus.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\EventStatus.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\Role.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\ModerateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\common\EventBriefDto.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\common\SeatInfoDto.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\user\UserResponse.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\order\OrderSummaryResponse.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\User.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\OrderItem.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\user\CreateUserRequest.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\CreateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\order\CreateOrderRequest.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Tag.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Order.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Ticket.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\TicketType.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Event.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\event\AdminEventResponse.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\common\TicketTypeAvailabilityDto.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\ticket\TicketResponse.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\order\OrderDetailResponse.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\event\PublicEventListResponse.java. Using fallback presentation compiler.
+2026.09.23 12:04:52 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\response\event\PublicEventDetailResponse.java. Using fallback presentation compiler.
+2026.09.23 12:05:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\Role.java. Using fallback presentation compiler.
+2026.09.23 12:05:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\Role.java. Using fallback presentation compiler.
+Sep 23, 2026 12:05:39 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 22
+2026.09.23 12:05:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\Role.java. Using fallback presentation compiler.
+2026.09.23 12:05:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\enums\Role.java. Using fallback presentation compiler.
+2026.09.23 12:05:41 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Ticket.java. Using fallback presentation compiler.
+2026.09.23 12:05:41 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Ticket.java. Using fallback presentation compiler.
+2026.09.23 12:05:42 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Ticket.java. Using fallback presentation compiler.
+Sep 23, 2026 12:05:42 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 31
+2026.09.23 12:05:41 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Ticket.java. Using fallback presentation compiler.
+2026.09.23 12:05:43 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Ticket.java. Using fallback presentation compiler.
+2026.09.23 12:05:48 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java. Using fallback presentation compiler.
+2026.09.23 12:05:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java. Using fallback presentation compiler.
+2026.09.23 12:05:48 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java. Using fallback presentation compiler.
+2026.09.23 12:05:48 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\entity\Seat.java. Using fallback presentation compiler.
+2026.09.23 12:05:54 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\user\UpdateUserRequest.java. Using fallback presentation compiler.
+2026.09.23 12:05:54 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\user\UpdateUserRequest.java. Using fallback presentation compiler.
+2026.09.23 12:05:54 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\user\UpdateUserRequest.java. Using fallback presentation compiler.
+2026.09.23 12:05:54 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\user\UpdateUserRequest.java. Using fallback presentation compiler.
+2026.09.23 12:06:01 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:06:01 WARN  no build target for: C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java
+2026.09.23 12:06:01 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:23 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:23 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:23 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:25 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:25 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+Sep 23, 2026 12:20:25 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 79
+2026.09.23 12:20:25 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:25 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:26 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:26 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+Sep 23, 2026 12:20:26 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 87
+2026.09.23 12:20:27 WARN  no build target for: C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java
+2026.09.23 12:20:27 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:26 INFO  no build target found for c:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:27 WARN  Running javac-semanticdb failed for file:///C:/Users/grigo/study/highload_apps/monolith-poster/src/main/java/ifmo/poster/monolith/dto/request/event/UpdateEventRequest.java. Output:
+
+2026.09.23 12:20:27 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+Sep 23, 2026 12:20:28 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 91
+2026.09.23 12:20:28 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:27 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:27 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:27 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:27 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:29 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:30 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:30 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:31 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:32 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:31 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:31 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+Sep 23, 2026 12:20:32 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 110
+2026.09.23 12:20:31 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+Sep 23, 2026 12:20:32 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 111
+2026.09.23 12:20:32 WARN  no build target for: C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java
+2026.09.23 12:20:32 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:33 INFO  no build target found for c:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventDataRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:33 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+Sep 23, 2026 12:20:33 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 113
+2026.09.23 12:20:32 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:33 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:33 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:33 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+Sep 23, 2026 12:20:36 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 119
+Sep 23, 2026 12:20:36 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 117
+2026.09.23 12:20:36 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:36 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:36 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:39 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:46 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:46 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:46 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:50 WARN  no build target for: C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java
+2026.09.23 12:20:49 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:50 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:50 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:51 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:51 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:51 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:53 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:53 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:53 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:53 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:53 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:54 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:55 WARN  no build target for: C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java
+2026.09.23 12:20:55 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:55 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:55 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:57 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:57 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:57 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:57 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:57 INFO  Created report: Optional[file:///C:/Users/grigo/study/highload_apps/monolith-poster/src/main/java/ifmo/poster/monolith/dto/request/event/UpdateEventRequest.java]
+2026.09.23 12:20:57 INFO  empty definition using pc, found symbol in pc: _empty_/LocalDateTime# (full report at: "C:\Users\grigo\study\highload_apps\monolith-poster\.metals\.reports\metals-full\2026-09-23\r_empty-definition_12-20-57-961.md")
+2026.09.23 12:20:58 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:58 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:58 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:58 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:58 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:58 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:59 WARN  no build target for: C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java
+2026.09.23 12:20:59 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:59 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:20:59 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:21:00 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:21:00 INFO  Created report: Optional[file:///C:/Users/grigo/study/highload_apps/monolith-poster/src/main/java/ifmo/poster/monolith/dto/request/event/UpdateEventRequest.java]
+2026.09.23 12:21:00 INFO  empty definition using pc, found symbol in pc: _empty_/Getter# (full report at: "C:\Users\grigo\study\highload_apps\monolith-poster\.metals\.reports\metals-full\2026-09-23\r_empty-definition_12-21-00-356.md")
+2026.09.23 12:20:59 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:21:01 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:21:01 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
+2026.09.23 12:21:06 INFO  no build target found for C:\Users\grigo\study\highload_apps\monolith-poster\src\main\java\ifmo\poster\monolith\dto\request\event\UpdateEventRequest.java. Using fallback presentation compiler.
