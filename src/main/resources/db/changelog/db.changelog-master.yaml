@@ -38,3 +38,7 @@ databaseChangeLog:
   - include:
       file: 010-seed-users.yaml
       relativeToChangelogFile: true
+
+  - include:
+      file: 011-create-event-registrations.yaml
+      relativeToChangelogFile: true
