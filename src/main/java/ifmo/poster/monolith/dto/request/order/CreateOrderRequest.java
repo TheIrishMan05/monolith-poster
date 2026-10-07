@@ -4,21 +4,27 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CreateOrderRequest {
 
     @NotNull(message = "ID пользователя обязательно")
     private Long userId;
 
-    @NotNull 
-    @Valid 
+    @NotNull
+    @Valid
     private List<OrderItemDto> items;
 
+    @Getter
+    @Setter
     public static class OrderItemDto {
         @NotNull(message = "ID события обязательно")
         private Long eventId;
 
-        @NotNull 
+        @NotNull
         private Long ticketTypeId;
 
         @Min(value = 1, message = "Минимум 1 билет")
