@@ -61,13 +61,7 @@ public class TicketService {
 
             for (CreateTicketInventoryRequest.SeatSpec spec : request.getSeats()) {
                 Ticket ticket = newTicket(event, ticketType);
-
-                Seat seat = new Seat();
-                seat.setRow(spec.getRow().trim());
-                seat.setNumber(spec.getNumber());
-                seat.setTicket(ticket);
-                ticket.setSeat(seat);
-
+                ticket.setSeat(buildSeat(spec, ticket));
                 created.add(ticketRepository.save(ticket));
             }
         } else {
@@ -114,6 +108,17 @@ public class TicketService {
         return ticket;
     }
 
+    private Seat buildSeat(CreateTicketInventoryRequest.SeatSpec spec, Ticket ticket) {
+        Seat seat = new Seat();
+        seat.setRow(spec.getRow().trim());
+        seat.setNumber(spec.getNumber());
+        seat.setSectorName(spec.getSectorName());
+        seat.setXCoordinate(spec.getXCoordinate());
+        seat.setYCoordinate(spec.getYCoordinate());
+        seat.setTicket(ticket);
+        return seat;
+    }
+
     private void validateSeats(List<CreateTicketInventoryRequest.SeatSpec> seats) {
         Set<String> unique = new HashSet<>();
         for (CreateTicketInventoryRequest.SeatSpec spec : seats) {
@@ -125,20 +130,25 @@ public class TicketService {
     }
 
     private TicketResponse toResponse(Ticket ticket) {
-        TicketResponse.SeatInfo seat = null;
+        TicketResponse.SeatInfo seatInfo = null;
         if (ticket.getSeat() != null) {
-            seat = new TicketResponse.SeatInfo(
-                    ticket.getSeat().getRow(),
-                    ticket.getSeat().getNumber()
+            Seat seat = ticket.getSeat();
+            seatInfo = new TicketResponse.SeatInfo(
+                    seat.getRow(),
+                    seat.getNumber(),
+                    seat.getSectorName(),
+                    seat.getXCoordinate(),
+                    seat.getYCoordinate()
             );
         }
+
         return TicketResponse.builder()
                 .id(ticket.getId())
                 .eventName(ticket.getEvent().getEventName())
                 .eventDateTime(ticket.getEvent().getDateTime())
                 .ticketTypeName(ticket.getTicketType().getTypeName())
                 .status(ticket.getStatus())
-                .seat(seat)
+                .seat(seatInfo)
                 .build();
     }
 }

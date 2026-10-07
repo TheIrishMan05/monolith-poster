@@ -25,5 +25,8 @@ public class TicketResponse {
     public static class SeatInfo {
         private String row;
         private Integer number;
+        private String sectorName;
+        private Double xCoordinate;
+        private Double yCoordinate;
     }
 }

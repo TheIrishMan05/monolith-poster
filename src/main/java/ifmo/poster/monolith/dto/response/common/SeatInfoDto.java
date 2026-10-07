@@ -14,4 +14,7 @@ import lombok.Setter;
 public class SeatInfoDto {
     private String rowLabel;
     private int seatNumber;
+    private String sectorName;
+    private Double xCoordinate;
+    private Double yCoordinate;
 }
