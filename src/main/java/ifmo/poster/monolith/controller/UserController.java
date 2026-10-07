@@ -5,6 +5,7 @@ import ifmo.poster.monolith.dto.request.user.UpdateRoleRequest;
 import ifmo.poster.monolith.dto.request.user.UpdateUserRequest;
 import ifmo.poster.monolith.dto.response.user.UserResponse;
 import ifmo.poster.monolith.service.UserService;
+import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,9 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,18 +42,11 @@ public class UserController {
         return userService.getById(id);
     }
 
-    /**
-     * Пагинация с total в header (требование README).
-     * Пример: GET /api/users?page=0&size=20
-     */
     @GetMapping
     public ResponseEntity<Page<UserResponse>> getAll(
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        if (pageable.getPageSize() > 50) {
-            throw new IllegalArgumentException("Page size must be <= 50");
-        }
-
+        PageableUtils.ensureMaxPageSize(pageable);
         Page<UserResponse> page = userService.getAll(pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));

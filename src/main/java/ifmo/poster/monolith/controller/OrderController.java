@@ -4,6 +4,7 @@ import ifmo.poster.monolith.dto.request.order.CreateOrderRequest;
 import ifmo.poster.monolith.dto.response.order.OrderDetailResponse;
 import ifmo.poster.monolith.dto.response.order.OrderSummaryResponse;
 import ifmo.poster.monolith.service.OrderService;
+import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -43,9 +44,7 @@ public class OrderController {
             @RequestParam Long userId,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        if (pageable.getPageSize() > 50) {
-            throw new IllegalArgumentException("Page size must be <= 50");
-        }
+        PageableUtils.ensureMaxPageSize(pageable);
         Page<OrderSummaryResponse> page = orderService.getByUser(userId, pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));

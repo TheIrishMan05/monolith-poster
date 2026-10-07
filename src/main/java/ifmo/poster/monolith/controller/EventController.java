@@ -8,6 +8,7 @@ import ifmo.poster.monolith.dto.response.event.PublicEventDetailResponse;
 import ifmo.poster.monolith.dto.response.event.PublicEventListResponse;
 import ifmo.poster.monolith.enums.EventStatus;
 import ifmo.poster.monolith.service.EventService;
+import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -56,35 +57,23 @@ public class EventController {
         return eventService.moderate(id, request);
     }
 
-    @GetMapping("/{id}")
-    public PublicEventDetailResponse getPublicById(@PathVariable Long id) {
-        return eventService.getPublicById(id);
-    }
-
-    @GetMapping("/{id}/admin")
-    public AdminEventResponse getAdminById(@PathVariable Long id) {
-        return eventService.getAdminById(id);
-    }
-
-    /** Page + total в header X-Total-Count */
     @GetMapping
     public ResponseEntity<Page<PublicEventListResponse>> getPublicPage(
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        ensurePageSize(pageable);
+        PageableUtils.ensureMaxPageSize(pageable);
         Page<PublicEventListResponse> page = eventService.getPublicPage(pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
-    /** Infinite scroll: без total. ?afterId=10&size=20 */
     @GetMapping("/feed")
     public Slice<PublicEventListResponse> getPublicFeed(
             @RequestParam(required = false) Long afterId,
             @PageableDefault(size = 20) Pageable pageable
     ) {
-        ensurePageSize(pageable);
+        PageableUtils.ensureMaxPageSize(pageable);
         return eventService.getPublicFeed(afterId, pageable);
     }
 
@@ -93,16 +82,20 @@ public class EventController {
             @RequestParam(required = false) EventStatus status,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        ensurePageSize(pageable);
+        PageableUtils.ensureMaxPageSize(pageable);
         Page<AdminEventResponse> page = eventService.getAdminPage(status, pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
-    private void ensurePageSize(Pageable pageable) {
-        if (pageable.getPageSize() > 50) {
-            throw new IllegalArgumentException("Page size must be <= 50");
-        }
+    @GetMapping("/{id}")
+    public PublicEventDetailResponse getPublicById(@PathVariable Long id) {
+        return eventService.getPublicById(id);
+    }
+
+    @GetMapping("/{id}/admin")
+    public AdminEventResponse getAdminById(@PathVariable Long id) {
+        return eventService.getAdminById(id);
     }
 }
