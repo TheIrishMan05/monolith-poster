@@ -179,7 +179,7 @@ public class EventService {
                 .location(event.getLocation())
                 .tags(tagNames(event))
                 .status(event.getStatus())
-                .blockReason(null)
+                .blockReason(event.getBlockReason())
                 .build();
     }
 
