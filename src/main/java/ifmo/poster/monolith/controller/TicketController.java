@@ -5,6 +5,7 @@ import ifmo.poster.monolith.dto.response.ticket.TicketInventoryResponse;
 import ifmo.poster.monolith.dto.response.ticket.TicketResponse;
 import ifmo.poster.monolith.enums.TicketStatus;
 import ifmo.poster.monolith.service.TicketService;
+import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,9 +43,7 @@ public class TicketController {
             @RequestParam(required = false) TicketStatus status,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        if (pageable.getPageSize() > 50) {
-            throw new IllegalArgumentException("Page size must be <= 50");
-        }
+        PageableUtils.ensureMaxPageSize(pageable);
         Page<TicketResponse> page = ticketService.getByEvent(eventId, status, pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));

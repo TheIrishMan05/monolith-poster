@@ -7,6 +7,7 @@ import ifmo.poster.monolith.dto.response.ticket.TicketResponse;
 import ifmo.poster.monolith.entity.Event;
 import ifmo.poster.monolith.entity.Order;
 import ifmo.poster.monolith.entity.OrderItem;
+import ifmo.poster.monolith.entity.Seat;
 import ifmo.poster.monolith.entity.Ticket;
 import ifmo.poster.monolith.entity.TicketType;
 import ifmo.poster.monolith.entity.User;
@@ -199,7 +200,6 @@ public class OrderService {
     private OrderDetailResponse toDetail(Order order) {
         List<OrderDetailResponse.OrderItemResponse> items = order.getItems().stream()
                 .map(item -> {
-                    // билеты грузим из репо: коллекция item.tickets после create может быть пустой
                     List<TicketResponse> tickets = ticketRepository
                             .findByOrderItem_Id(item.getId())
                             .stream()
@@ -232,20 +232,25 @@ public class OrderService {
     }
 
     private TicketResponse toTicketResponse(Ticket ticket) {
-        TicketResponse.SeatInfo seat = null;
+        TicketResponse.SeatInfo seatInfo = null;
         if (ticket.getSeat() != null) {
-            seat = new TicketResponse.SeatInfo(
-                    ticket.getSeat().getRow(),
-                    ticket.getSeat().getNumber()
+            Seat seat = ticket.getSeat();
+            seatInfo = new TicketResponse.SeatInfo(
+                    seat.getRow(),
+                    seat.getNumber(),
+                    seat.getSectorName(),
+                    seat.getXCoordinate(),
+                    seat.getYCoordinate()
             );
         }
+
         return TicketResponse.builder()
                 .id(ticket.getId())
                 .eventName(ticket.getEvent().getEventName())
                 .eventDateTime(ticket.getEvent().getDateTime())
                 .ticketTypeName(ticket.getTicketType().getTypeName())
                 .status(ticket.getStatus())
-                .seat(seat)
+                .seat(seatInfo)
                 .build();
     }
 }

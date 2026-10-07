@@ -45,5 +45,12 @@ public class CreateTicketInventoryRequest {
 
         @Min(value = 1, message = "Номер места минимум 1")
         private int number;
+
+        @Size(max = 50)
+        private String sectorName;
+
+        private Double xCoordinate;
+
+        private Double yCoordinate;
     }
 }

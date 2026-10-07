@@ -3,6 +3,7 @@ package ifmo.poster.monolith.controller;
 import ifmo.poster.monolith.dto.request.event.CreateEventRegistrationRequest;
 import ifmo.poster.monolith.dto.response.event.EventRegistrationResponse;
 import ifmo.poster.monolith.service.EventRegistrationService;
+import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,9 +48,7 @@ public class EventRegistrationController {
             @RequestParam(required = false) Long eventId,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        if (pageable.getPageSize() > 50) {
-            throw new IllegalArgumentException("Page size must be <= 50");
-        }
+        PageableUtils.ensureMaxPageSize(pageable);
         if (userId == null && eventId == null) {
             throw new IllegalArgumentException("Specify userId or eventId");
         }

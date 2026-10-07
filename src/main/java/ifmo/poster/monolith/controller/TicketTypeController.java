@@ -1,10 +1,9 @@
 package ifmo.poster.monolith.controller;
 
-import ifmo.poster.monolith.dto.request.user.CreateUserRequest;
-import ifmo.poster.monolith.dto.request.user.UpdateRoleRequest;
-import ifmo.poster.monolith.dto.request.user.UpdateUserRequest;
-import ifmo.poster.monolith.dto.response.user.UserResponse;
-import ifmo.poster.monolith.service.UserService;
+import ifmo.poster.monolith.dto.request.ticket.CreateTicketTypeRequest;
+import ifmo.poster.monolith.dto.request.ticket.UpdateTicketTypeRequest;
+import ifmo.poster.monolith.dto.response.ticket.TicketTypeResponse;
+import ifmo.poster.monolith.service.TicketTypeService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,61 +16,53 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/ticket-types")
 @RequiredArgsConstructor
-public class UserController {
+public class TicketTypeController {
 
-    private final UserService userService;
+    private final TicketTypeService ticketTypeService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
+    public ResponseEntity<TicketTypeResponse> create(@Valid @RequestBody CreateTicketTypeRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ticketTypeService.create(request));
     }
 
     @GetMapping("/{id}")
-    public UserResponse getById(@PathVariable Long id) {
-        return userService.getById(id);
+    public TicketTypeResponse getById(@PathVariable Long id) {
+        return ticketTypeService.getById(id);
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponse>> getAll(
+    public ResponseEntity<Page<TicketTypeResponse>> getAll(
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         PageableUtils.ensureMaxPageSize(pageable);
-        Page<UserResponse> page = userService.getAll(pageable);
+        Page<TicketTypeResponse> page = ticketTypeService.getAll(pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
-    @PatchMapping("/{id}")
-    public UserResponse update(
+    @PutMapping("/{id}")
+    public TicketTypeResponse update(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateUserRequest request
+            @Valid @RequestBody UpdateTicketTypeRequest request
     ) {
-        return userService.update(id, request);
-    }
-
-    @PatchMapping("/{id}/role")
-    public UserResponse updateRole(
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateRoleRequest request
-    ) {
-        return userService.updateRole(id, request);
+        return ticketTypeService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        userService.delete(id);
+        ticketTypeService.delete(id);
     }
 }
