@@ -34,6 +34,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     Page<Ticket> findByEventIdAndStatus(Long eventId, TicketStatus status, Pageable pageable);
     
+    long countByTicketTypeId(Long ticketTypeId);
+    
     /**
      * Блокирует выбранные строки (SELECT ... FOR UPDATE),
      * чтобы два заказа не забрали одни и те же AVAILABLE билеты.
