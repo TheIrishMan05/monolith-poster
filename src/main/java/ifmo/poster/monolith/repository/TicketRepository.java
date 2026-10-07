@@ -5,6 +5,7 @@ import ifmo.poster.monolith.enums.TicketStatus;
 import jakarta.persistence.LockModeType;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -29,6 +30,10 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     List<Ticket> findByOrderItem_Id(Long orderItemId);
 
+    Page<Ticket> findByEventId(Long eventId, Pageable pageable);
+
+    Page<Ticket> findByEventIdAndStatus(Long eventId, TicketStatus status, Pageable pageable);
+    
     /**
      * Блокирует выбранные строки (SELECT ... FOR UPDATE),
      * чтобы два заказа не забрали одни и те же AVAILABLE билеты.
