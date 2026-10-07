@@ -74,6 +74,12 @@ public class EventService {
         }
 
         event.setStatus(newStatus);
+        if (newStatus == EventStatus.BLOCKED) {
+            event.setBlockReason(request.getReason());
+        } else {
+            // при разблокировке / APPROVE очищаем причину
+            event.setBlockReason(null);
+        }
         return toAdminResponse(eventRepository.save(event));
     }
 
