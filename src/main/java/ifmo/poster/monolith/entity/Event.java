@@ -68,6 +68,10 @@ public class Event {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private EventStatus status = EventStatus.PENDING;
+
+    @Size(max = 500)
+    @Column(name = "block_reason", length = 500)
+    private String blockReason;
     
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private Set<Ticket> tickets;
