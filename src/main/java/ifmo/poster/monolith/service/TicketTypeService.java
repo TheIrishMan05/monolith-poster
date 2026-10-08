@@ -6,20 +6,26 @@ import ifmo.poster.monolith.dto.response.ticket.TicketTypeResponse;
 import ifmo.poster.monolith.entity.TicketType;
 import ifmo.poster.monolith.exception.BusinessException;
 import ifmo.poster.monolith.exception.ResourceNotFoundException;
-import ifmo.poster.monolith.repository.TicketRepository;
 import ifmo.poster.monolith.repository.TicketTypeRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class TicketTypeService {
 
     private final TicketTypeRepository ticketTypeRepository;
-    private final TicketRepository ticketRepository;
+    private final TicketService ticketService;
+
+    public TicketTypeService(
+            TicketTypeRepository ticketTypeRepository,
+            @Lazy TicketService ticketService
+    ) {
+        this.ticketTypeRepository = ticketTypeRepository;
+        this.ticketService = ticketService;
+    }
 
     @Transactional
     public TicketTypeResponse create(CreateTicketTypeRequest request) {
@@ -34,7 +40,7 @@ public class TicketTypeService {
 
     @Transactional(readOnly = true)
     public TicketTypeResponse getById(Long id) {
-        return toResponse(find(id));
+        return toResponse(getEntity(id));
     }
 
     @Transactional(readOnly = true)
@@ -44,7 +50,7 @@ public class TicketTypeService {
 
     @Transactional
     public TicketTypeResponse update(Long id, UpdateTicketTypeRequest request) {
-        TicketType type = find(id);
+        TicketType type = getEntity(id);
 
         if (request.getTypeName() != null && !request.getTypeName().isBlank()) {
             String name = request.getTypeName().trim();
@@ -66,7 +72,7 @@ public class TicketTypeService {
         if (!ticketTypeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Ticket type not found: " + id);
         }
-        long tickets = ticketRepository.countByTicketTypeId(id);
+        long tickets = ticketService.countByTicketTypeId(id);
         if (tickets > 0) {
             throw new BusinessException(
                     "Cannot delete ticket type with existing tickets: " + tickets);
@@ -74,7 +80,8 @@ public class TicketTypeService {
         ticketTypeRepository.deleteById(id);
     }
 
-    private TicketType find(Long id) {
+    @Transactional(readOnly = true)
+    public TicketType getEntity(Long id) {
         return ticketTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket type not found: " + id));
     }
