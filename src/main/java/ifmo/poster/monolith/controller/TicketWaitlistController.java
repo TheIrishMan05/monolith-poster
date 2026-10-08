@@ -2,8 +2,6 @@ package ifmo.poster.monolith.controller;
 
 import ifmo.poster.monolith.dto.request.ticket.JoinTicketWaitlistRequest;
 import ifmo.poster.monolith.dto.response.ticket.TicketWaitlistResponse;
-import ifmo.poster.monolith.enums.Role;
-import ifmo.poster.monolith.security.RequireRoles;
 import ifmo.poster.monolith.service.TicketWaitlistService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/ticket-waitlist")
 @RequiredArgsConstructor
-@RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
 public class TicketWaitlistController {
 
     private final TicketWaitlistService waitlistService;

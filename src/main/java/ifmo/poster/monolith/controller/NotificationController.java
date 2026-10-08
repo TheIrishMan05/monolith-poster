@@ -1,8 +1,6 @@
 package ifmo.poster.monolith.controller;
 
 import ifmo.poster.monolith.dto.response.notification.NotificationResponse;
-import ifmo.poster.monolith.enums.Role;
-import ifmo.poster.monolith.security.RequireRoles;
 import ifmo.poster.monolith.service.NotificationService;
 import ifmo.poster.monolith.util.PageableUtils;
 import java.util.Map;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
-@RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
 public class NotificationController {
 
     private final NotificationService notificationService;

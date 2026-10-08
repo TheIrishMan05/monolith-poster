@@ -3,9 +3,7 @@ package ifmo.poster.monolith.controller;
 import ifmo.poster.monolith.dto.request.ticket.CreateTicketInventoryRequest;
 import ifmo.poster.monolith.dto.response.ticket.TicketInventoryResponse;
 import ifmo.poster.monolith.dto.response.ticket.TicketResponse;
-import ifmo.poster.monolith.enums.Role;
 import ifmo.poster.monolith.enums.TicketStatus;
-import ifmo.poster.monolith.security.RequireRoles;
 import ifmo.poster.monolith.service.TicketService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
@@ -30,8 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TicketController {
 
     private final TicketService ticketService;
-
-    @RequireRoles({Role.ADMIN, Role.SUPERUSER})
     @PostMapping("/inventory")
     public ResponseEntity<TicketInventoryResponse> createInventory(
             @Valid @RequestBody CreateTicketInventoryRequest request
@@ -39,8 +35,6 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ticketService.createInventory(request));
     }
-
-    @RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
     @GetMapping
     public ResponseEntity<Page<TicketResponse>> listByEvent(
             @RequestParam Long eventId,
