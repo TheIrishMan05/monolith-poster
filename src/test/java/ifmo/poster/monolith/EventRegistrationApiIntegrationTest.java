@@ -18,10 +18,9 @@ class EventRegistrationApiIntegrationTest extends AbstractIntegrationTest {
         Long userId = createUser();
         Long eventId = createActiveEvent("Registration Event " + System.nanoTime());
 
-        MvcResult registerResult = mockMvc.perform(post("/api/registrations")
-                        .param("userId", String.valueOf(userId))
+        MvcResult registerResult = mockMvc.perform(asUser(post("/api/registrations")
                         .contentType(jsonContent())
-                        .content(json(Map.of("eventId", eventId))))
+                        .content(json(Map.of("eventId", eventId))), userId))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("CONFIRMED"))
                 .andExpect(jsonPath("$.event.id").value(eventId))
@@ -30,42 +29,39 @@ class EventRegistrationApiIntegrationTest extends AbstractIntegrationTest {
 
         Long registrationId = idFrom(registerResult);
 
-        mockMvc.perform(post("/api/registrations")
-                        .param("userId", String.valueOf(userId))
+        mockMvc.perform(asUser(post("/api/registrations")
                         .contentType(jsonContent())
-                        .content(json(Map.of("eventId", eventId))))
+                        .content(json(Map.of("eventId", eventId))), userId))
                 .andExpect(status().isConflict());
 
-        mockMvc.perform(get("/api/registrations/{id}", registrationId))
+        mockMvc.perform(asUser(get("/api/registrations/{id}", registrationId), userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(registrationId));
 
-        mockMvc.perform(get("/api/registrations")
-                        .param("userId", String.valueOf(userId))
-                        .param("size", "10"))
+        mockMvc.perform(asUser(get("/api/registrations").param("size", "10"), userId))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-Total-Count"))
                 .andExpect(jsonPath("$.content.length()", greaterThanOrEqualTo(1)));
 
-        mockMvc.perform(get("/api/registrations")
+        mockMvc.perform(asAdmin(get("/api/registrations")
                         .param("eventId", String.valueOf(eventId))
-                        .param("size", "10"))
+                        .param("size", "10")))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-Total-Count"))
                 .andExpect(jsonPath("$.content.length()", greaterThanOrEqualTo(1)));
 
-        mockMvc.perform(post("/api/registrations/{id}/cancel", registrationId))
+        mockMvc.perform(asUser(post("/api/registrations/{id}/cancel", registrationId), userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("CANCELED"));
 
-        mockMvc.perform(post("/api/registrations/{id}/cancel", registrationId))
+        mockMvc.perform(asUser(post("/api/registrations/{id}/cancel", registrationId), userId))
                 .andExpect(status().isConflict());
 
-        mockMvc.perform(post("/api/registrations")
-                        .param("userId", String.valueOf(userId))
+        mockMvc.perform(asUser(post("/api/registrations")
                         .contentType(jsonContent())
-                        .content(json(Map.of("eventId", eventId))))
+                        .content(json(Map.of("eventId", eventId))), userId))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(registrationId))
                 .andExpect(jsonPath("$.status").value("CONFIRMED"));
     }
 
@@ -73,30 +69,24 @@ class EventRegistrationApiIntegrationTest extends AbstractIntegrationTest {
     void registrationRejectsInvalidListFiltersAndInactiveEvent() throws Exception {
         Long userId = createUser();
 
-        MvcResult createResult = mockMvc.perform(post("/api/events")
+        MvcResult createResult = mockMvc.perform(asAdmin(post("/api/events")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventName", "Pending Event " + System.nanoTime(),
                                 "description", "A long enough event description for pending registration test.",
                                 "location", "Small Hall",
                                 "dateTime", java.time.LocalDateTime.now().plusDays(3).toString()
-                        ))))
+                        )))))
                 .andExpect(status().isCreated())
                 .andReturn();
         Long pendingEventId = idFrom(createResult);
 
-        mockMvc.perform(post("/api/registrations")
-                        .param("userId", String.valueOf(userId))
+        mockMvc.perform(asUser(post("/api/registrations")
                         .contentType(jsonContent())
-                        .content(json(Map.of("eventId", pendingEventId))))
+                        .content(json(Map.of("eventId", pendingEventId))), userId))
                 .andExpect(status().isConflict());
 
         mockMvc.perform(get("/api/registrations"))
-                .andExpect(status().isBadRequest());
-
-        mockMvc.perform(get("/api/registrations")
-                        .param("userId", String.valueOf(userId))
-                        .param("eventId", String.valueOf(pendingEventId)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 }

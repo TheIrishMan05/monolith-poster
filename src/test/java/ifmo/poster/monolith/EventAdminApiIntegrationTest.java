@@ -18,35 +18,35 @@ class EventAdminApiIntegrationTest extends AbstractIntegrationTest {
     void adminCanReadUpdateAndBlockEvents() throws Exception {
         Long eventId = createActiveEvent("Admin Event " + System.nanoTime());
 
-        mockMvc.perform(get("/api/events/{id}/admin", eventId))
+        mockMvc.perform(asAdmin(get("/api/events/{id}/admin", eventId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(eventId));
 
-        mockMvc.perform(put("/api/events/{id}", eventId)
+        mockMvc.perform(asAdmin(put("/api/events/{id}", eventId)
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventName", "Updated Admin Event",
                                 "description", "A long enough updated event description for admin test.",
                                 "location", "Updated Hall",
                                 "dateTime", LocalDateTime.now().plusDays(7).toString()
-                        ))))
+                        )))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventName").value("Updated Admin Event"))
                 .andExpect(jsonPath("$.location").value("Updated Hall"));
 
-        mockMvc.perform(get("/api/events/admin")
+        mockMvc.perform(asAdmin(get("/api/events/admin")
                         .param("status", "ACTIVE")
-                        .param("size", "10"))
+                        .param("size", "10")))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-Total-Count"))
                 .andExpect(jsonPath("$.content.length()", greaterThanOrEqualTo(1)));
 
-        mockMvc.perform(patch("/api/events/{id}/moderate", eventId)
+        mockMvc.perform(asCensor(patch("/api/events/{id}/moderate", eventId)
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "newStatus", "BLOCKED",
                                 "reason", "Manual moderation"
-                        ))))
+                        )))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("BLOCKED"))
                 .andExpect(jsonPath("$.blockReason").value("Manual moderation"));
