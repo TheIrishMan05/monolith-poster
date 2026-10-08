@@ -7,6 +7,7 @@ public final class PageableUtils {
     public static final int MAX_PAGE_SIZE = 50;
 
     private PageableUtils() {
+        throw new AssertionError("Suppress default constructor for noninstantiability");
     }
 
     public static void ensureMaxPageSize(Pageable pageable) {
