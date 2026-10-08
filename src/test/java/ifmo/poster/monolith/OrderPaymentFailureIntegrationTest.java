@@ -15,11 +15,15 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+/**
+ * Откат транзакции заказа при отказе оплаты: билеты снова AVAILABLE, подтверждённого заказа нет.
+ */
 class OrderPaymentFailureIntegrationTest extends AbstractIntegrationTest {
 
     @MockitoBean
     private FakePaymentService paymentService;
 
+    /** FakePaymentService возвращает fail → 409 и инвентарь не «залипает» в SOLD. */
     @Test
     void paymentFailureRollsBackSoldTickets() throws Exception {
         when(paymentService.pay(any(PaymentRequest.class)))
@@ -29,31 +33,33 @@ class OrderPaymentFailureIntegrationTest extends AbstractIntegrationTest {
         Long eventId = createActiveEvent("Payment Fail Event " + System.nanoTime());
         Long ticketTypeId = createTicketType();
 
-        mockMvc.perform(asAdmin(post("/api/tickets/inventory")
+        mockMvc.perform(post("/api/tickets/inventory")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventId", eventId,
                                 "ticketTypeId", ticketTypeId,
                                 "quantity", 1
-                        )))))
+                        ))))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(asUser(post("/api/orders")
+        mockMvc.perform(post("/api/orders")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "userId", userId,
                                 "items", List.of(item(eventId, ticketTypeId, 1))
-                        ))), userId))
+                        ))))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("Payment failed")));
 
-        mockMvc.perform(asUser(get("/api/tickets")
+        mockMvc.perform(get("/api/tickets")
                         .param("eventId", String.valueOf(eventId))
-                        .param("status", "AVAILABLE"), userId))
+                        .param("status", "AVAILABLE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1));
 
-        mockMvc.perform(asUser(get("/api/orders").param("size", "10"), userId))
+        mockMvc.perform(get("/api/orders")
+                        .param("userId", String.valueOf(userId))
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(0));
     }

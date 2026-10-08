@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import ifmo.poster.monolith.entity.Notification;
 import ifmo.poster.monolith.entity.User;
 import ifmo.poster.monolith.repository.NotificationRepository;
+import ifmo.poster.monolith.repository.UserRepository;
 import ifmo.poster.monolith.service.NotificationService;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -18,10 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+/**
+ * In-app уведомления: ownership (чужие → 404), deleteAll только своего user,
+ * scheduled cleanup удаляет записи старше retention-days.
+ */
 class NotificationIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -32,6 +40,7 @@ class NotificationIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    /** Чужой delete/read → 404; deleteAll владельца не трогает уведомления другого пользователя. */
     @Test
     void ownershipIsolatesDeleteAndDeleteAllIsScopedToUser() throws Exception {
         Long ownerId = createUser();
@@ -39,53 +48,64 @@ class NotificationIntegrationTest extends AbstractIntegrationTest {
         Long eventId = createActiveEvent("Notif Ownership " + System.nanoTime());
         Long ticketTypeId = createTicketType();
 
-        mockMvc.perform(asUser(post("/api/ticket-waitlist")
+        mockMvc.perform(post("/api/ticket-waitlist")
+                        .param("userId", String.valueOf(ownerId))
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventId", eventId,
                                 "ticketTypeId", ticketTypeId
-                        ))), ownerId))
+                        ))))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(asAdmin(post("/api/tickets/inventory")
+        mockMvc.perform(post("/api/tickets/inventory")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventId", eventId,
                                 "ticketTypeId", ticketTypeId,
                                 "quantity", 1
-                        )))))
+                        ))))
                 .andExpect(status().isCreated());
 
-        MvcResult list = mockMvc.perform(asUser(get("/api/notifications").param("size", "10"), ownerId))
+        MvcResult list = mockMvc.perform(get("/api/notifications")
+                        .param("userId", String.valueOf(ownerId))
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andReturn();
         Long notificationId = bodyFrom(list).get("content").get(0).get("id").asLong();
 
-        mockMvc.perform(asUser(delete("/api/notifications/{id}", notificationId), strangerId))
+        mockMvc.perform(delete("/api/notifications/{id}", notificationId)
+                        .param("userId", String.valueOf(strangerId)))
                 .andExpect(status().isNotFound());
 
-        mockMvc.perform(asUser(post("/api/notifications/{id}/read", notificationId), strangerId))
+        mockMvc.perform(post("/api/notifications/{id}/read", notificationId)
+                        .param("userId", String.valueOf(strangerId)))
                 .andExpect(status().isNotFound());
 
         User stranger = userRepository.findById(strangerId).orElseThrow();
         Notification strangerNote = notificationRepository.save(
                 new Notification(stranger, "Hello", "Private message"));
 
-        mockMvc.perform(asUser(delete("/api/notifications"), ownerId))
+        mockMvc.perform(delete("/api/notifications")
+                        .param("userId", String.valueOf(ownerId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.deleted").value(1));
 
-        mockMvc.perform(asUser(get("/api/notifications").param("size", "10"), ownerId))
+        mockMvc.perform(get("/api/notifications")
+                        .param("userId", String.valueOf(ownerId))
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(0));
 
-        mockMvc.perform(asUser(get("/api/notifications").param("size", "10"), strangerId))
+        mockMvc.perform(get("/api/notifications")
+                        .param("userId", String.valueOf(strangerId))
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content[0].id").value(strangerNote.getId()));
     }
 
+    /** Прямой вызов cleanupExpired(): старше retention удалены, свежие остаются. */
     @Test
     void cleanupExpiredRemovesOnlyOldNotifications() throws Exception {
         Long userId = createUser();

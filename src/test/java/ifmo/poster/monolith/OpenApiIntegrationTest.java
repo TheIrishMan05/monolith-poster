@@ -8,8 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 
+/** Проверка, что springdoc отдаёт OpenAPI JSON и Swagger UI. */
 class OpenApiIntegrationTest extends AbstractIntegrationTest {
 
+    /** /v3/api-docs содержит title и paths; /swagger-ui/index.html отдаёт UI. */
     @Test
     void openApiJsonAndSwaggerUiAreAvailable() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
