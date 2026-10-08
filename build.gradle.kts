@@ -62,3 +62,18 @@ tasks.jacocoTestReport {
 		html.required.set(true)
 	}
 }
+
+val maxInventoryBatch: String =
+	providers.gradleProperty("maxInventoryBatch").orElse("200").get()
+
+tasks.named<ProcessResources>("processResources") {
+	filesMatching("**/application.properties") {
+		filter { line ->
+			if (line.startsWith("app.inventory.max-batch=")) {
+				"app.inventory.max-batch=$maxInventoryBatch"
+			} else {
+				line
+			}
+		}
+	}
+}
