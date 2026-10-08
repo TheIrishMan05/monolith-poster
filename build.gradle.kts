@@ -63,6 +63,21 @@ tasks.jacocoTestReport {
 	}
 }
 
+tasks.jacocoTestCoverageVerification {
+	dependsOn(tasks.test)
+	violationRules {
+		rule {
+			limit {
+				minimum = "0.70".toBigDecimal()
+			}
+		}
+	}
+}
+
+tasks.check {
+	dependsOn(tasks.jacocoTestCoverageVerification)
+}
+
 val maxInventoryBatch: String =
 	providers.gradleProperty("maxInventoryBatch").orElse("200").get()
 
