@@ -2,6 +2,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
 	java
+	jacoco
 	id("org.springframework.boot") version "4.1.1"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -40,6 +41,10 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-restclient-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	testImplementation("org.springframework.boot:spring-boot-testcontainers")
+	testImplementation(platform("org.testcontainers:testcontainers-bom:1.21.3"))
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:postgresql")
 	testCompileOnly("org.projectlombok:lombok")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testAnnotationProcessor("org.projectlombok:lombok")
@@ -47,4 +52,13 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
 }
