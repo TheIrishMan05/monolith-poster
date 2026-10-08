@@ -1,13 +1,10 @@
 package ifmo.poster.monolith.controller;
 
-import ifmo.poster.monolith.dto.request.order.CreateOrderRequest;
-import ifmo.poster.monolith.dto.response.order.OrderDetailResponse;
-import ifmo.poster.monolith.dto.response.order.OrderSummaryResponse;
+import ifmo.poster.monolith.dto.request.ticket.JoinTicketWaitlistRequest;
+import ifmo.poster.monolith.dto.response.ticket.TicketWaitlistResponse;
 import ifmo.poster.monolith.enums.Role;
-import ifmo.poster.monolith.exception.AccessDeniedException;
 import ifmo.poster.monolith.security.RequireRoles;
-import ifmo.poster.monolith.security.RoleContext;
-import ifmo.poster.monolith.service.OrderService;
+import ifmo.poster.monolith.service.TicketWaitlistService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,41 +24,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/ticket-waitlist")
 @RequiredArgsConstructor
 @RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
-public class OrderController {
+public class TicketWaitlistController {
 
-    private final OrderService orderService;
+    private final TicketWaitlistService waitlistService;
 
     @PostMapping
-    public ResponseEntity<OrderDetailResponse> create(@Valid @RequestBody CreateOrderRequest request) {
-        Long actorId = RoleContext.getUserId();
-        if (actorId == null || !actorId.equals(request.getUserId())) {
-            throw new AccessDeniedException("body.userId must match query userId");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.create(request));
-    }
-
-    @GetMapping("/{id}")
-    public OrderDetailResponse getById(@PathVariable Long id) {
-        return orderService.getById(id);
+    public ResponseEntity<TicketWaitlistResponse> join(
+            @RequestParam Long userId,
+            @Valid @RequestBody JoinTicketWaitlistRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(waitlistService.join(userId, request));
     }
 
     @GetMapping
-    public ResponseEntity<Page<OrderSummaryResponse>> getByUser(
+    public ResponseEntity<Page<TicketWaitlistResponse>> listMine(
             @RequestParam Long userId,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         PageableUtils.ensureMaxPageSize(pageable);
-        Page<OrderSummaryResponse> page = orderService.getByUser(userId, pageable);
+        Page<TicketWaitlistResponse> page = waitlistService.getByUser(userId, pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
     @PostMapping("/{id}/cancel")
-    public OrderDetailResponse cancel(@PathVariable Long id) {
-        return orderService.cancel(id);
+    public TicketWaitlistResponse cancel(
+            @PathVariable Long id,
+            @RequestParam Long userId
+    ) {
+        return waitlistService.cancel(id, userId);
     }
 }
