@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,14 +29,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class TicketTypeController {
 
     private final TicketTypeService ticketTypeService;
+
     @PostMapping
     public ResponseEntity<TicketTypeResponse> create(@Valid @RequestBody CreateTicketTypeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketTypeService.create(request));
     }
+
     @GetMapping("/{id}")
-    public TicketTypeResponse getById(@PathVariable Long id) {
-        return ticketTypeService.getById(id);
+    public ResponseEntity<TicketTypeResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketTypeService.getById(id));
     }
+
     @GetMapping
     public ResponseEntity<Page<TicketTypeResponse>> getAll(
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
@@ -48,16 +50,18 @@ public class TicketTypeController {
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
         return ResponseEntity.ok().headers(headers).body(page);
     }
+
     @PutMapping("/{id}")
-    public TicketTypeResponse update(
+    public ResponseEntity<TicketTypeResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateTicketTypeRequest request
     ) {
-        return ticketTypeService.update(id, request);
+        return ResponseEntity.ok(ticketTypeService.update(id, request));
     }
+
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         ticketTypeService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -35,8 +35,8 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public OrderDetailResponse getById(@PathVariable Long id) {
-        return orderService.getById(id);
+    public ResponseEntity<OrderDetailResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.getById(id));
     }
 
     @GetMapping
@@ -52,7 +52,7 @@ public class OrderController {
     }
 
     @PostMapping("/{id}/cancel")
-    public OrderDetailResponse cancel(@PathVariable Long id) {
-        return orderService.cancel(id);
+    public ResponseEntity<OrderDetailResponse> cancel(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.cancel(id));
     }
 }

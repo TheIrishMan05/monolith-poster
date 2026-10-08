@@ -15,9 +15,7 @@ import ifmo.poster.monolith.enums.TicketStatus;
 import ifmo.poster.monolith.exception.BusinessException;
 import ifmo.poster.monolith.exception.ResourceNotFoundException;
 import ifmo.poster.monolith.repository.EventRepository;
-import ifmo.poster.monolith.repository.TagRepository;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final TagRepository tagRepository;
+    private final TagService tagService;
 
     @Transactional
     public AdminEventResponse create(CreateEventRequest request) {
@@ -44,13 +42,13 @@ public class EventService {
         event.setLocation(request.getLocation());
         event.setDateTime(request.getDateTime());
         event.setStatus(EventStatus.PENDING);
-        event.setTags(resolveTags(request.getTagNames()));
+        event.setTags(tagService.resolveTags(request.getTagNames()));
         return toAdminResponse(eventRepository.save(event));
     }
 
     @Transactional
     public AdminEventResponse update(Long id, UpdateEventRequest request) {
-        Event event = findEvent(id);
+        Event event = getEntity(id);
         event.setEventName(request.getEventName());
         event.setDescription(request.getDescription());
         event.setLocation(request.getLocation());
@@ -62,7 +60,7 @@ public class EventService {
 
     @Transactional
     public AdminEventResponse moderate(Long id, ModerateEventRequest request) {
-        Event event = findEvent(id);
+        Event event = getEntity(id);
         EventStatus newStatus = request.getNewStatus();
 
         if (newStatus != EventStatus.ACTIVE && newStatus != EventStatus.BLOCKED) {
@@ -77,7 +75,6 @@ public class EventService {
         if (newStatus == EventStatus.BLOCKED) {
             event.setBlockReason(request.getReason());
         } else {
-            // при разблокировке / APPROVE очищаем причину
             event.setBlockReason(null);
         }
         return toAdminResponse(eventRepository.save(event));
@@ -85,7 +82,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public PublicEventDetailResponse getPublicById(Long id) {
-        Event event = findEvent(id);
+        Event event = getEntity(id);
         if (event.getStatus() != EventStatus.ACTIVE) {
             throw new ResourceNotFoundException("Event not found: " + id);
         }
@@ -94,17 +91,15 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public AdminEventResponse getAdminById(Long id) {
-        return toAdminResponse(findEvent(id));
+        return toAdminResponse(getEntity(id));
     }
 
-    /** Пагинация с total (потом в X-Total-Count). */
     @Transactional(readOnly = true)
     public Page<PublicEventListResponse> getPublicPage(Pageable pageable) {
         return eventRepository.findByStatus(EventStatus.ACTIVE, pageable)
                 .map(this::toListResponse);
     }
 
-    /** Infinite scroll без total count. */
     @Transactional(readOnly = true)
     public Slice<PublicEventListResponse> getPublicFeed(Long afterId, Pageable pageable) {
         Slice<Event> slice = (afterId == null)
@@ -122,29 +117,15 @@ public class EventService {
         return page.map(this::toAdminResponse);
     }
 
-    private Event findEvent(Long id) {
-        return eventRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Event not found: " + id));
+    @Transactional(readOnly = true)
+    public boolean exists(Long id) {
+        return eventRepository.existsById(id);
     }
 
-    private Set<Tag> resolveTags(Set<String> tagNames) {
-        if (tagNames == null || tagNames.isEmpty()) {
-            return new HashSet<>();
-        }
-        Set<Tag> tags = new HashSet<>();
-        for (String name : tagNames) {
-            if (name == null || name.isBlank()) {
-                continue;
-            }
-            Tag tag = tagRepository.findByNameIgnoreCase(name.trim())
-                    .orElseGet(() -> {
-                        Tag created = new Tag();
-                        created.setName(name.trim());
-                        return tagRepository.save(created);
-                    });
-            tags.add(tag);
-        }
-        return tags;
+    @Transactional(readOnly = true)
+    public Event getEntity(Long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found: " + id));
     }
 
     private PublicEventListResponse toListResponse(Event event) {

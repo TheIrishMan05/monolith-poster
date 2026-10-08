@@ -50,10 +50,10 @@ public class TicketWaitlistController {
     }
 
     @PostMapping("/{id}/cancel")
-    public TicketWaitlistResponse cancel(
+    public ResponseEntity<TicketWaitlistResponse> cancel(
             @PathVariable Long id,
             @RequestParam Long userId
     ) {
-        return waitlistService.cancel(id, userId);
+        return ResponseEntity.ok(waitlistService.cancel(id, userId));
     }
 }

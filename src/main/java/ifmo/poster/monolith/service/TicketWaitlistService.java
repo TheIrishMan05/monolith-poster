@@ -7,15 +7,11 @@ import ifmo.poster.monolith.entity.TicketType;
 import ifmo.poster.monolith.entity.TicketWaitlist;
 import ifmo.poster.monolith.entity.User;
 import ifmo.poster.monolith.enums.EventStatus;
-import ifmo.poster.monolith.enums.TicketStatus;
 import ifmo.poster.monolith.enums.WaitlistStatus;
 import ifmo.poster.monolith.exception.BusinessException;
 import ifmo.poster.monolith.exception.ResourceNotFoundException;
-import ifmo.poster.monolith.repository.EventRepository;
-import ifmo.poster.monolith.repository.TicketRepository;
-import ifmo.poster.monolith.repository.TicketTypeRepository;
 import ifmo.poster.monolith.repository.TicketWaitlistRepository;
-import ifmo.poster.monolith.repository.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,32 +24,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketWaitlistService {
 
     private final TicketWaitlistRepository waitlistRepository;
-    private final UserRepository userRepository;
-    private final EventRepository eventRepository;
-    private final TicketTypeRepository ticketTypeRepository;
-    private final TicketRepository ticketRepository;
+    private final UserService userService;
+    private final EventService eventService;
+    private final TicketTypeService ticketTypeService;
+    private final TicketService ticketService;
 
     @Transactional
     public TicketWaitlistResponse join(Long userId, JoinTicketWaitlistRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
-
-        Event event = eventRepository.findById(request.getEventId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Event not found: " + request.getEventId()));
+        User user = userService.getEntity(userId);
+        Event event = eventService.getEntity(request.getEventId());
         if (event.getStatus() != EventStatus.ACTIVE) {
             throw new BusinessException("Event is not open for waitlist: " + event.getId());
         }
 
-        TicketType ticketType = ticketTypeRepository.findById(request.getTicketTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Ticket type not found: " + request.getTicketTypeId()));
+        TicketType ticketType = ticketTypeService.getEntity(request.getTicketTypeId());
 
-        long available = ticketRepository.countByEventIdAndTicketTypeIdAndStatus(
-                event.getId(),
-                ticketType.getId(),
-                TicketStatus.AVAILABLE
-        );
+        long available = ticketService.countAvailable(event.getId(), ticketType.getId());
         if (available > 0) {
             throw new BusinessException(
                     "Tickets are already available — place an order instead of joining waitlist");
@@ -103,10 +89,16 @@ public class TicketWaitlistService {
 
     @Transactional(readOnly = true)
     public Page<TicketWaitlistResponse> getByUser(Long userId, Pageable pageable) {
-        if (!userRepository.existsById(userId)) {
+        if (!userService.exists(userId)) {
             throw new ResourceNotFoundException("User not found: " + userId);
         }
         return waitlistRepository.findByUserId(userId, pageable).map(this::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TicketWaitlist> findWaiting(Long eventId, Long ticketTypeId) {
+        return waitlistRepository.findByEventIdAndTicketTypeIdAndStatus(
+                eventId, ticketTypeId, WaitlistStatus.WAITING);
     }
 
     private TicketWaitlistResponse toResponse(TicketWaitlist entry) {

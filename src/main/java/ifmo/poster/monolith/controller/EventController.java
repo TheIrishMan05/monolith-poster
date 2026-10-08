@@ -35,23 +35,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController {
 
     private final EventService eventService;
+
     @PostMapping
     public ResponseEntity<AdminEventResponse> create(@Valid @RequestBody CreateEventRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(eventService.create(request));
     }
+
     @PutMapping("/{id}")
-    public AdminEventResponse update(
+    public ResponseEntity<AdminEventResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateEventRequest request
     ) {
-        return eventService.update(id, request);
+        return ResponseEntity.ok(eventService.update(id, request));
     }
+
     @PatchMapping("/{id}/moderate")
-    public AdminEventResponse moderate(
+    public ResponseEntity<AdminEventResponse> moderate(
             @PathVariable Long id,
             @Valid @RequestBody ModerateEventRequest request
     ) {
-        return eventService.moderate(id, request);
+        return ResponseEntity.ok(eventService.moderate(id, request));
     }
 
     @GetMapping
@@ -66,13 +69,14 @@ public class EventController {
     }
 
     @GetMapping("/feed")
-    public Slice<PublicEventListResponse> getPublicFeed(
+    public ResponseEntity<Slice<PublicEventListResponse>> getPublicFeed(
             @RequestParam(required = false) Long afterId,
             @PageableDefault(size = 20) Pageable pageable
     ) {
         PageableUtils.ensureMaxPageSize(pageable);
-        return eventService.getPublicFeed(afterId, pageable);
+        return ResponseEntity.ok(eventService.getPublicFeed(afterId, pageable));
     }
+
     @GetMapping("/admin")
     public ResponseEntity<Page<AdminEventResponse>> getAdminPage(
             @RequestParam(required = false) EventStatus status,
@@ -86,11 +90,12 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public PublicEventDetailResponse getPublicById(@PathVariable Long id) {
-        return eventService.getPublicById(id);
+    public ResponseEntity<PublicEventDetailResponse> getPublicById(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.getPublicById(id));
     }
+
     @GetMapping("/{id}/admin")
-    public AdminEventResponse getAdminById(@PathVariable Long id) {
-        return eventService.getAdminById(id);
+    public ResponseEntity<AdminEventResponse> getAdminById(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.getAdminById(id));
     }
 }

@@ -4,12 +4,9 @@ import ifmo.poster.monolith.dto.response.notification.NotificationResponse;
 import ifmo.poster.monolith.entity.Notification;
 import ifmo.poster.monolith.entity.TicketWaitlist;
 import ifmo.poster.monolith.entity.User;
-import ifmo.poster.monolith.enums.WaitlistStatus;
 import ifmo.poster.monolith.exception.ResourceNotFoundException;
 import ifmo.poster.monolith.notification.EmailNotificationService;
 import ifmo.poster.monolith.repository.NotificationRepository;
-import ifmo.poster.monolith.repository.TicketWaitlistRepository;
-import ifmo.poster.monolith.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.slf4j.Logger;
@@ -27,21 +24,21 @@ public class NotificationService {
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationRepository notificationRepository;
-    private final TicketWaitlistRepository waitlistRepository;
-    private final UserRepository userRepository;
+    private final TicketWaitlistService waitlistService;
+    private final UserService userService;
     private final EmailNotificationService emailNotificationService;
     private final int retentionDays;
 
     public NotificationService(
             NotificationRepository notificationRepository,
-            TicketWaitlistRepository waitlistRepository,
-            UserRepository userRepository,
+            TicketWaitlistService waitlistService,
+            UserService userService,
             EmailNotificationService emailNotificationService,
             @Value("${app.notifications.retention-days:7}") int retentionDays
     ) {
         this.notificationRepository = notificationRepository;
-        this.waitlistRepository = waitlistRepository;
-        this.userRepository = userRepository;
+        this.waitlistService = waitlistService;
+        this.userService = userService;
         this.emailNotificationService = emailNotificationService;
         this.retentionDays = retentionDays;
     }
@@ -51,11 +48,7 @@ public class NotificationService {
      */
     @Transactional
     public void notifyTicketAvailability(Long eventId, Long ticketTypeId) {
-        List<TicketWaitlist> waiting = waitlistRepository.findByEventIdAndTicketTypeIdAndStatus(
-                eventId,
-                ticketTypeId,
-                WaitlistStatus.WAITING
-        );
+        List<TicketWaitlist> waiting = waitlistService.findWaiting(eventId, ticketTypeId);
         if (waiting.isEmpty()) {
             return;
         }
@@ -75,7 +68,7 @@ public class NotificationService {
 
     @Transactional(readOnly = true)
     public Page<NotificationResponse> getByUser(Long userId, Pageable pageable) {
-        if (!userRepository.existsById(userId)) {
+        if (!userService.exists(userId)) {
             throw new ResourceNotFoundException("User not found: " + userId);
         }
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
@@ -97,15 +90,12 @@ public class NotificationService {
 
     @Transactional
     public long deleteAllForUser(Long userId) {
-        if (!userRepository.existsById(userId)) {
+        if (!userService.exists(userId)) {
             throw new ResourceNotFoundException("User not found: " + userId);
         }
         return notificationRepository.deleteByUserId(userId);
     }
 
-    /**
-     * Каждый день в 03:00 удаляет in-app уведомления старше retention-days.
-     */
     @Scheduled(cron = "${app.notifications.cleanup-cron:0 0 3 * * *}")
     @Transactional
     public void cleanupExpired() {

@@ -7,23 +7,17 @@ import ifmo.poster.monolith.dto.response.ticket.TicketResponse;
 import ifmo.poster.monolith.entity.Event;
 import ifmo.poster.monolith.entity.Order;
 import ifmo.poster.monolith.entity.OrderItem;
-import ifmo.poster.monolith.entity.Seat;
 import ifmo.poster.monolith.entity.Ticket;
 import ifmo.poster.monolith.entity.TicketType;
 import ifmo.poster.monolith.entity.User;
 import ifmo.poster.monolith.enums.EventStatus;
 import ifmo.poster.monolith.enums.OrderStatus;
-import ifmo.poster.monolith.enums.TicketStatus;
 import ifmo.poster.monolith.exception.BusinessException;
 import ifmo.poster.monolith.exception.ResourceNotFoundException;
 import ifmo.poster.monolith.payment.FakePaymentService;
 import ifmo.poster.monolith.payment.PaymentRequest;
 import ifmo.poster.monolith.payment.PaymentResult;
-import ifmo.poster.monolith.repository.EventRepository;
 import ifmo.poster.monolith.repository.OrderRepository;
-import ifmo.poster.monolith.repository.TicketRepository;
-import ifmo.poster.monolith.repository.TicketTypeRepository;
-import ifmo.poster.monolith.repository.UserRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -31,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final EventRepository eventRepository;
-    private final TicketTypeRepository ticketTypeRepository;
-    private final TicketRepository ticketRepository;
+    private final UserService userService;
+    private final EventService eventService;
+    private final TicketTypeService ticketTypeService;
+    private final TicketService ticketService;
     private final FakePaymentService paymentService;
     private final NotificationService notificationService;
 
@@ -58,9 +51,7 @@ public class OrderService {
             throw new BusinessException("Order must contain at least one item");
         }
 
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User not found: " + request.getUserId()));
+        User user = userService.getEntity(request.getUserId());
 
         Order order = new Order();
         order.setUser(user);
@@ -70,23 +61,15 @@ public class OrderService {
         BigDecimal total = BigDecimal.ZERO;
 
         for (CreateOrderRequest.OrderItemDto itemDto : request.getItems()) {
-            Event event = eventRepository.findById(itemDto.getEventId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Event not found: " + itemDto.getEventId()));
+            Event event = eventService.getEntity(itemDto.getEventId());
             if (event.getStatus() != EventStatus.ACTIVE) {
                 throw new BusinessException(
                         "Event is not available for purchase: " + event.getId());
             }
 
-            TicketType ticketType = ticketTypeRepository.findById(itemDto.getTicketTypeId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Ticket type not found: " + itemDto.getTicketTypeId()));
+            TicketType ticketType = ticketTypeService.getEntity(itemDto.getTicketTypeId());
 
-            long availableCount = ticketRepository.countByEventIdAndTicketTypeIdAndStatus(
-                    event.getId(),
-                    ticketType.getId(),
-                    TicketStatus.AVAILABLE
-            );
+            long availableCount = ticketService.countAvailable(event.getId(), ticketType.getId());
             if (availableCount < itemDto.getQuantity()) {
                 throw new BusinessException(
                         "Not enough tickets for event " + event.getId()
@@ -108,23 +91,12 @@ public class OrderService {
         Order saved = orderRepository.save(order);
 
         for (OrderItem item : saved.getItems()) {
-            List<Ticket> available = ticketRepository.findAvailableForUpdate(
+            List<Ticket> available = ticketService.lockAvailable(
                     item.getEvent().getId(),
                     item.getTicketType().getId(),
-                    TicketStatus.AVAILABLE,
-                    PageRequest.of(0, item.getQuantity())
+                    item.getQuantity()
             );
-            if (available.size() < item.getQuantity()) {
-                throw new BusinessException(
-                        "Not enough tickets for event " + item.getEvent().getId()
-                                + ", type " + item.getTicketType().getTypeName());
-            }
-
-            for (Ticket ticket : available) {
-                ticket.setOrderItem(item);
-                ticket.setStatus(TicketStatus.SOLD);
-                ticketRepository.save(ticket);
-            }
+            ticketService.markSold(available, item);
         }
 
         PaymentResult payment = paymentService.pay(
@@ -160,13 +132,9 @@ public class OrderService {
             throw new BusinessException("Refund failed: " + refund.message());
         }
 
-        List<Ticket> tickets = ticketRepository.findByOrderItem_Order_Id(order.getId());
+        List<Ticket> tickets = ticketService.releaseByOrderId(order.getId());
         Set<String> notifiedKeys = new HashSet<>();
         for (Ticket ticket : tickets) {
-            ticket.setStatus(TicketStatus.AVAILABLE);
-            ticket.setOrderItem(null);
-            ticketRepository.save(ticket);
-
             Long eventId = ticket.getEvent().getId();
             Long ticketTypeId = ticket.getTicketType().getId();
             String key = eventId + ":" + ticketTypeId;
@@ -187,7 +155,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderSummaryResponse> getByUser(Long userId, Pageable pageable) {
-        if (!userRepository.existsById(userId)) {
+        if (!userService.exists(userId)) {
             throw new ResourceNotFoundException("User not found: " + userId);
         }
         return orderRepository.findByUserId(userId, pageable).map(this::toSummary);
@@ -211,10 +179,10 @@ public class OrderService {
     private OrderDetailResponse toDetail(Order order) {
         List<OrderDetailResponse.OrderItemResponse> items = order.getItems().stream()
                 .map(item -> {
-                    List<TicketResponse> tickets = ticketRepository
-                            .findByOrderItem_Id(item.getId())
+                    List<TicketResponse> tickets = ticketService
+                            .findByOrderItemId(item.getId())
                             .stream()
-                            .map(this::toTicketResponse)
+                            .map(ticketService::toResponse)
                             .toList();
                     BigDecimal subtotal = item.getPrice()
                             .multiply(BigDecimal.valueOf(item.getQuantity()));
@@ -239,29 +207,6 @@ public class OrderService {
                         order.getUser().getId(),
                         order.getUser().getUserName()))
                 .items(items)
-                .build();
-    }
-
-    private TicketResponse toTicketResponse(Ticket ticket) {
-        TicketResponse.SeatInfo seatInfo = null;
-        if (ticket.getSeat() != null) {
-            Seat seat = ticket.getSeat();
-            seatInfo = new TicketResponse.SeatInfo(
-                    seat.getRow(),
-                    seat.getNumber(),
-                    seat.getSectorName(),
-                    seat.getXCoordinate(),
-                    seat.getYCoordinate()
-            );
-        }
-
-        return TicketResponse.builder()
-                .id(ticket.getId())
-                .eventName(ticket.getEvent().getEventName())
-                .eventDateTime(ticket.getEvent().getDateTime())
-                .ticketTypeName(ticket.getTicketType().getTypeName())
-                .status(ticket.getStatus())
-                .seat(seatInfo)
                 .build();
     }
 }

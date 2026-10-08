@@ -72,10 +72,20 @@ public class UserService {
 
     @Transactional
     public void delete(Long id) {
-        if (!userRepository.existsById(id)) {
+        if (!exists(id)) {
             throw new ResourceNotFoundException("User not found: " + id);
         }
         userRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean exists(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public User getEntity(Long id) {
+        return findUser(id);
     }
 
     private User findUser(Long id) {

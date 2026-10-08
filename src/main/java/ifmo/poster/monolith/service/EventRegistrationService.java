@@ -12,8 +12,6 @@ import ifmo.poster.monolith.enums.RegistrationStatus;
 import ifmo.poster.monolith.exception.BusinessException;
 import ifmo.poster.monolith.exception.ResourceNotFoundException;
 import ifmo.poster.monolith.repository.EventRegistrationRepository;
-import ifmo.poster.monolith.repository.EventRepository;
-import ifmo.poster.monolith.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventRegistrationService {
 
     private final EventRegistrationRepository registrationRepository;
-    private final UserRepository userRepository;
-    private final EventRepository eventRepository;
+    private final UserService userService;
+    private final EventService eventService;
 
     @Transactional
     public EventRegistrationResponse register(Long userId, CreateEventRegistrationRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
-
-        Event event = eventRepository.findById(request.getEventId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Event not found: " + request.getEventId()));
+        User user = userService.getEntity(userId);
+        Event event = eventService.getEntity(request.getEventId());
 
         if (event.getStatus() != EventStatus.ACTIVE) {
             throw new BusinessException("Event is not open for registration: " + event.getId());
@@ -52,7 +46,6 @@ public class EventRegistrationService {
                 throw new BusinessException(
                         "User already registered for event: " + event.getId());
             }
-            // повторная регистрация после отмены (unique user+event уже есть в БД)
             registration.setStatus(RegistrationStatus.CONFIRMED);
             registration.setRegistrationDate(LocalDateTime.now());
             return toResponse(registrationRepository.save(registration));
@@ -84,7 +77,7 @@ public class EventRegistrationService {
 
     @Transactional(readOnly = true)
     public Page<EventRegistrationResponse> getByUser(Long userId, Pageable pageable) {
-        if (!userRepository.existsById(userId)) {
+        if (!userService.exists(userId)) {
             throw new ResourceNotFoundException("User not found: " + userId);
         }
         return registrationRepository.findByUserId(userId, pageable).map(this::toResponse);
@@ -92,7 +85,7 @@ public class EventRegistrationService {
 
     @Transactional(readOnly = true)
     public Page<EventRegistrationResponse> getByEvent(Long eventId, Pageable pageable) {
-        if (!eventRepository.existsById(eventId)) {
+        if (!eventService.exists(eventId)) {
             throw new ResourceNotFoundException("Event not found: " + eventId);
         }
         return registrationRepository.findByEventId(eventId, pageable).map(this::toResponse);
