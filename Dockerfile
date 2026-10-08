@@ -1,15 +1,13 @@
-FROM gradle:8.14.2-jdk21 AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /workspace
 
-COPY settings.gradle.kts build.gradle.kts gradlew ./
+COPY gradlew gradlew.bat settings.gradle.kts build.gradle.kts ./
 COPY gradle ./gradle
-
-RUN chmod +x gradlew
 
 COPY src ./src
 
-RUN ./gradlew --no-daemon clean bootJar -x test
+RUN chmod +x gradlew && ./gradlew --no-daemon clean bootJar -x test
 
 
 FROM eclipse-temurin:21-jre-alpine

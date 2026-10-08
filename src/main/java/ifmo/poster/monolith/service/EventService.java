@@ -210,7 +210,7 @@ public class EventService {
 
         return byType.values().stream()
                 .map(tickets -> {
-                    var type = tickets.getFirst().getTicketType();
+                    var type = tickets.get(0).getTicketType();
                     int qty = tickets.size();
                     return TicketTypeAvailabilityDto.builder()
                             .ticketTypeId(type.getId())
