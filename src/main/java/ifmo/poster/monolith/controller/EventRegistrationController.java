@@ -52,16 +52,14 @@ public class EventRegistrationController {
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         PageableUtils.ensureMaxPageSize(pageable);
-        if (userId == null && eventId == null) {
+        // userId is also required by RoleInterceptor for auth; when eventId is set, filter by event.
+        if (eventId == null && userId == null) {
             throw new IllegalArgumentException("Specify userId or eventId");
         }
-        if (userId != null && eventId != null) {
-            throw new IllegalArgumentException("Specify only one of userId or eventId");
-        }
 
-        Page<EventRegistrationResponse> page = (userId != null)
-                ? registrationService.getByUser(userId, pageable)
-                : registrationService.getByEvent(eventId, pageable);
+        Page<EventRegistrationResponse> page = (eventId != null)
+                ? registrationService.getByEvent(eventId, pageable)
+                : registrationService.getByUser(userId, pageable);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
