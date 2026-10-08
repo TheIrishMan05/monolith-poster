@@ -38,3 +38,96 @@
   - Продумать и согласовать архитектуру БД с преподавателем.
   - Должны быть реализованы связи между сущностями каждого типа: Many to Many, One to Many/Many to One, Many to Many с дополнительным полем.
   - Добавить интерактивную документацию с помощью OpenApi 3, развернуть Swagger (он должен быть общий) и дальше его поддерживать.
+
+## Запуск приложения
+
+### Требования
+
+- Docker + Docker Compose
+- JDK 21 (для локального запуска и тестов)
+- файл `.env` в корне репозитория (скопируйте из `.env.example`)
+
+```bash
+cp .env.example .env
+```
+
+Переменные в `.env`:
+
+| Переменная | Назначение |
+|---|---|
+| `POSTGRES_USER` | пользователь PostgreSQL |
+| `POSTGRES_PASSWORD` | пароль PostgreSQL |
+| `POSTGRES_DB` | имя БД |
+
+### Запуск через Docker Compose
+
+Сборка образа приложения и подъём PostgreSQL + API:
+
+```bash
+docker compose up --build
+```
+
+Приложение: `http://localhost:8080`  
+Swagger UI: `http://localhost:8080/swagger-ui/index.html`  
+OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
+Остановка:
+
+```bash
+docker compose down
+```
+
+Данные БД сохраняются в volume `poster-db-data`. Чтобы сбросить БД:
+
+```bash
+docker compose down -v
+```
+
+### Защищённые эндпоинты
+
+Большинство `/api/**` требуют query-параметры `userId` и `role`, совпадающие с пользователем в БД.  
+После миграций доступен seed-admin: `userId=1`, `role=ADMIN` (логин `admin`).
+
+Пример:
+
+```bash
+curl "http://localhost:8080/api/users?userId=1&role=ADMIN&size=10"
+```
+
+### Локальный запуск (без Docker-образа приложения)
+
+Поднять только БД:
+
+```bash
+docker compose up -d db
+```
+
+Затем:
+
+```bash
+export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/poster
+export SPRING_DATASOURCE_USERNAME=poster
+export SPRING_DATASOURCE_PASSWORD=poster
+./gradlew bootRun
+```
+
+На Windows (PowerShell):
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
+$env:SPRING_DATASOURCE_URL = "jdbc:postgresql://localhost:5432/poster"
+$env:SPRING_DATASOURCE_USERNAME = "poster"
+$env:SPRING_DATASOURCE_PASSWORD = "poster"
+./gradlew bootRun
+```
+
+### Тесты и покрытие
+
+Нужны JDK 21 и запущенный Docker (Testcontainers):
+
+```bash
+./gradlew test jacocoTestReport jacocoTestCoverageVerification
+```
+
+HTML-отчёт покрытия: `build/reports/jacoco/test/html/index.html`  
+Отчёт по тестам: `build/reports/tests/test/index.html`
