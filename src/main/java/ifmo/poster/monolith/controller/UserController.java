@@ -4,8 +4,6 @@ import ifmo.poster.monolith.dto.request.user.CreateUserRequest;
 import ifmo.poster.monolith.dto.request.user.UpdateRoleRequest;
 import ifmo.poster.monolith.dto.request.user.UpdateUserRequest;
 import ifmo.poster.monolith.dto.response.user.UserResponse;
-import ifmo.poster.monolith.enums.Role;
-import ifmo.poster.monolith.security.RequireRoles;
 import ifmo.poster.monolith.service.UserService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
@@ -38,14 +36,10 @@ public class UserController {
     public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }
-
-    @RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
     @GetMapping("/{id}")
     public UserResponse getById(@PathVariable Long id) {
         return userService.getById(id);
     }
-
-    @RequireRoles({Role.ADMIN, Role.SUPERUSER})
     @GetMapping
     public ResponseEntity<Page<UserResponse>> getAll(
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
@@ -56,8 +50,6 @@ public class UserController {
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
         return ResponseEntity.ok().headers(headers).body(page);
     }
-
-    @RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
     @PatchMapping("/{id}")
     public UserResponse update(
             @PathVariable Long id,
@@ -65,8 +57,6 @@ public class UserController {
     ) {
         return userService.update(id, request);
     }
-
-    @RequireRoles({Role.ADMIN, Role.SUPERUSER})
     @PatchMapping("/{id}/role")
     public UserResponse updateRole(
             @PathVariable Long id,
@@ -74,8 +64,6 @@ public class UserController {
     ) {
         return userService.updateRole(id, request);
     }
-
-    @RequireRoles({Role.ADMIN, Role.SUPERUSER})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

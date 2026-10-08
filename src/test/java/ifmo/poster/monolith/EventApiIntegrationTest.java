@@ -8,8 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 
+/** Публичные события: page с X-Total-Count, infinite feed без totalElements, get by id. */
 class EventApiIntegrationTest extends AbstractIntegrationTest {
 
+    /** ACTIVE событие видно в /api/events, /feed (Slice) и по id. */
     @Test
     void eventsSupportModerationPageAndInfiniteFeed() throws Exception {
         Long eventId = createActiveEvent("Concert " + System.nanoTime());
@@ -29,6 +31,7 @@ class EventApiIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.id").value(eventId));
     }
 
+    /** size=51 на публичном списке событий → 400. */
     @Test
     void pageSizeIsLimitedToFiftyRecords() throws Exception {
         mockMvc.perform(get("/api/events").param("size", "51"))

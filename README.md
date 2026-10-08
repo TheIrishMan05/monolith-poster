@@ -83,17 +83,6 @@ docker compose down
 docker compose down -v
 ```
 
-### Защищённые эндпоинты
-
-Большинство `/api/**` требуют query-параметры `userId` и `role`, совпадающие с пользователем в БД.  
-После миграций доступен seed-admin: `userId=1`, `role=ADMIN` (логин `admin`).
-
-Пример:
-
-```bash
-curl "http://localhost:8080/api/users?userId=1&role=ADMIN&size=10"
-```
-
 ### Локальный запуск (без Docker-образа приложения)
 
 Поднять только БД:

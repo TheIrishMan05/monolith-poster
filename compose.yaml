@@ -18,9 +18,6 @@ services:
       timeout: 5s
       retries: 10
 
-    networks:
-      - poster-net
-
 
   app:
     build:
@@ -49,13 +46,6 @@ services:
     ports:
       - "8080:8080"
 
-    networks:
-      - poster-net
-
 
 volumes:
   poster-db-data:
-
-
-networks:
-  poster-net:

@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
+/** CRUD пользователей, валидация и заголовок X-Total-Count на списке. */
 class UserApiIntegrationTest extends AbstractIntegrationTest {
 
     @Test
@@ -30,17 +31,17 @@ class UserApiIntegrationTest extends AbstractIntegrationTest {
 
         Long userId = idFrom(createResult);
 
-        mockMvc.perform(asUser(get("/api/users/{id}", userId), userId))
+        mockMvc.perform(get("/api/users/{id}", userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("user_" + suffix + "@poster.test"));
 
-        mockMvc.perform(asUser(patch("/api/users/{id}", userId)
+        mockMvc.perform(patch("/api/users/{id}", userId)
                         .contentType(jsonContent())
-                        .content(json(Map.of("email", "new_" + suffix + "@poster.test"))), userId))
+                        .content(json(Map.of("email", "new_" + suffix + "@poster.test"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("new_" + suffix + "@poster.test"));
 
-        mockMvc.perform(asAdmin(get("/api/users").param("size", "10")))
+        mockMvc.perform(get("/api/users").param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-Total-Count"))
                 .andExpect(jsonPath("$.content.length()", greaterThanOrEqualTo(1)));

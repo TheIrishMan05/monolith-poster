@@ -2,8 +2,6 @@ package ifmo.poster.monolith.controller;
 
 import ifmo.poster.monolith.dto.request.event.CreateEventRegistrationRequest;
 import ifmo.poster.monolith.dto.response.event.EventRegistrationResponse;
-import ifmo.poster.monolith.enums.Role;
-import ifmo.poster.monolith.security.RequireRoles;
 import ifmo.poster.monolith.service.EventRegistrationService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/registrations")
 @RequiredArgsConstructor
-@RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
 public class EventRegistrationController {
 
     private final EventRegistrationService registrationService;
@@ -52,14 +49,16 @@ public class EventRegistrationController {
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         PageableUtils.ensureMaxPageSize(pageable);
-        // userId is also required by RoleInterceptor for auth; when eventId is set, filter by event.
-        if (eventId == null && userId == null) {
+        if (userId == null && eventId == null) {
             throw new IllegalArgumentException("Specify userId or eventId");
         }
+        if (userId != null && eventId != null) {
+            throw new IllegalArgumentException("Specify only one of userId or eventId");
+        }
 
-        Page<EventRegistrationResponse> page = (eventId != null)
-                ? registrationService.getByEvent(eventId, pageable)
-                : registrationService.getByUser(userId, pageable);
+        Page<EventRegistrationResponse> page = (userId != null)
+                ? registrationService.getByUser(userId, pageable)
+                : registrationService.getByEvent(eventId, pageable);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));

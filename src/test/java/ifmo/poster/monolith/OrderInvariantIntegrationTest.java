@@ -17,8 +17,16 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
+/**
+ * Инварианты заказа: нет oversell при гонке и корректные side effects при отмене
+ * (уведомление waitlist один раз, повторный cancel → conflict).
+ */
 class OrderInvariantIntegrationTest extends AbstractIntegrationTest {
 
+    /**
+     * Один AVAILABLE билет, два параллельных create: ровно один 201, второй 409,
+     * в итоге AVAILABLE = 0.
+     */
     @Test
     void concurrentOrdersCannotOversellSingleTicket() throws Exception {
         Long buyerOne = createUser();
@@ -26,13 +34,13 @@ class OrderInvariantIntegrationTest extends AbstractIntegrationTest {
         Long eventId = createActiveEvent("Race Event " + System.nanoTime());
         Long ticketTypeId = createTicketType();
 
-        mockMvc.perform(asAdmin(post("/api/tickets/inventory")
+        mockMvc.perform(post("/api/tickets/inventory")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventId", eventId,
                                 "ticketTypeId", ticketTypeId,
                                 "quantity", 1
-                        )))))
+                        ))))
                 .andExpect(status().isCreated());
 
         ExecutorService pool = Executors.newFixedThreadPool(2);
@@ -55,13 +63,17 @@ class OrderInvariantIntegrationTest extends AbstractIntegrationTest {
             pool.shutdownNow();
         }
 
-        mockMvc.perform(asUser(get("/api/tickets")
+        mockMvc.perform(get("/api/tickets")
                         .param("eventId", String.valueOf(eventId))
-                        .param("status", "AVAILABLE"), buyerOne))
+                        .param("status", "AVAILABLE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(0));
     }
 
+    /**
+     * Cancel возвращает билет в AVAILABLE, шлёт одно уведомление waiting-пользователю;
+     * повторный cancel не дублирует уведомления.
+     */
     @Test
     void cancelNotifiesWaitlistOnceAndDoubleCancelIsRejected() throws Exception {
         Long buyerId = createUser();
@@ -69,63 +81,68 @@ class OrderInvariantIntegrationTest extends AbstractIntegrationTest {
         Long eventId = createActiveEvent("Cancel Notify Event " + System.nanoTime());
         Long ticketTypeId = createTicketType();
 
-        mockMvc.perform(asAdmin(post("/api/tickets/inventory")
+        mockMvc.perform(post("/api/tickets/inventory")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventId", eventId,
                                 "ticketTypeId", ticketTypeId,
                                 "quantity", 1
-                        )))))
+                        ))))
                 .andExpect(status().isCreated());
 
-        MvcResult orderResult = mockMvc.perform(asUser(post("/api/orders")
+        MvcResult orderResult = mockMvc.perform(post("/api/orders")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "userId", buyerId,
                                 "items", List.of(item(eventId, ticketTypeId, 1))
-                        ))), buyerId))
+                        ))))
                 .andExpect(status().isCreated())
                 .andReturn();
         Long orderId = idFrom(orderResult);
 
-        mockMvc.perform(asUser(post("/api/ticket-waitlist")
+        mockMvc.perform(post("/api/ticket-waitlist")
+                        .param("userId", String.valueOf(waiterId))
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventId", eventId,
                                 "ticketTypeId", ticketTypeId
-                        ))), waiterId))
+                        ))))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(asUser(post("/api/orders/{id}/cancel", orderId), buyerId))
+        mockMvc.perform(post("/api/orders/{id}/cancel", orderId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("CANCELLED"));
 
-        mockMvc.perform(asUser(get("/api/notifications").param("size", "10"), waiterId))
+        mockMvc.perform(get("/api/notifications")
+                        .param("userId", String.valueOf(waiterId))
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content[0].title").value("Tickets available"));
 
-        mockMvc.perform(asUser(post("/api/orders/{id}/cancel", orderId), buyerId))
+        mockMvc.perform(post("/api/orders/{id}/cancel", orderId))
                 .andExpect(status().isConflict());
 
-        mockMvc.perform(asUser(get("/api/notifications").param("size", "10"), waiterId))
+        mockMvc.perform(get("/api/notifications")
+                        .param("userId", String.valueOf(waiterId))
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1));
 
-        mockMvc.perform(asUser(get("/api/tickets")
+        mockMvc.perform(get("/api/tickets")
                         .param("eventId", String.valueOf(eventId))
-                        .param("status", "AVAILABLE"), buyerId))
+                        .param("status", "AVAILABLE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1));
     }
 
     private int createOrderStatus(Long userId, Long eventId, Long ticketTypeId) throws Exception {
-        MvcResult result = mockMvc.perform(asUser(post("/api/orders")
+        MvcResult result = mockMvc.perform(post("/api/orders")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "userId", userId,
                                 "items", List.of(item(eventId, ticketTypeId, 1))
-                        ))), userId))
+                        ))))
                 .andReturn();
         return result.getResponse().getStatus();
     }

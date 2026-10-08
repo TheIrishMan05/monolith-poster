@@ -2,8 +2,6 @@ package ifmo.poster.monolith;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ifmo.poster.monolith.enums.Role;
-import ifmo.poster.monolith.repository.UserRepository;
 import java.math.BigDecimal;
 import java.util.Map;
 import org.junit.jupiter.api.TestInstance;
@@ -15,13 +13,15 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * База для интеграционных API-тестов: Spring Boot + MockMvc + PostgreSQL в Testcontainers.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,9 +38,6 @@ abstract class AbstractIntegrationTest {
 
     @Autowired
     protected MockMvc mockMvc;
-
-    @Autowired
-    protected UserRepository userRepository;
 
     protected final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
@@ -77,42 +74,8 @@ abstract class AbstractIntegrationTest {
         );
     }
 
-    protected long adminId() {
-        return userRepository.findByUserName("admin")
-                .orElseThrow(() -> new IllegalStateException("Seeded admin user is missing"))
-                .getId();
-    }
-
-    protected long censorId() {
-        return userRepository.findByUserName("censor")
-                .orElseThrow(() -> new IllegalStateException("Seeded censor user is missing"))
-                .getId();
-    }
-
-    protected MockHttpServletRequestBuilder withActor(
-            MockHttpServletRequestBuilder builder,
-            long userId,
-            Role role
-    ) {
-        return builder
-                .param("userId", String.valueOf(userId))
-                .param("role", role.name());
-    }
-
-    protected MockHttpServletRequestBuilder asAdmin(MockHttpServletRequestBuilder builder) {
-        return withActor(builder, adminId(), Role.ADMIN);
-    }
-
-    protected MockHttpServletRequestBuilder asCensor(MockHttpServletRequestBuilder builder) {
-        return withActor(builder, censorId(), Role.CENSOR);
-    }
-
-    protected MockHttpServletRequestBuilder asUser(MockHttpServletRequestBuilder builder, long userId) {
-        return withActor(builder, userId, Role.USER);
-    }
-
     protected Long createActiveEvent(String name) throws Exception {
-        MvcResult createResult = mockMvc.perform(asAdmin(post("/api/events")
+        MvcResult createResult = mockMvc.perform(post("/api/events")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "eventName", name,
@@ -120,15 +83,15 @@ abstract class AbstractIntegrationTest {
                                 "location", "Main Hall",
                                 "dateTime", java.time.LocalDateTime.now().plusDays(5).toString(),
                                 "tagNames", java.util.List.of("music", "live")
-                        )))))
+                        ))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         Long eventId = idFrom(createResult);
 
-        mockMvc.perform(asCensor(patch("/api/events/{id}/moderate", eventId)
+        mockMvc.perform(patch("/api/events/{id}/moderate", eventId)
                         .contentType(jsonContent())
-                        .content(json(Map.of("newStatus", "ACTIVE")))))
+                        .content(json(Map.of("newStatus", "ACTIVE"))))
                 .andExpect(status().isOk());
 
         return eventId;
@@ -149,12 +112,12 @@ abstract class AbstractIntegrationTest {
 
     protected Long createTicketType() throws Exception {
         String suffix = String.valueOf(System.nanoTime());
-        MvcResult result = mockMvc.perform(asAdmin(post("/api/ticket-types")
+        MvcResult result = mockMvc.perform(post("/api/ticket-types")
                         .contentType(jsonContent())
                         .content(json(Map.of(
                                 "typeName", "Type " + suffix,
                                 "price", BigDecimal.valueOf(1200)
-                        )))))
+                        ))))
                 .andExpect(status().isCreated())
                 .andReturn();
         return idFrom(result);
