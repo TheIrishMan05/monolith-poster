@@ -7,6 +7,8 @@ import ifmo.poster.monolith.dto.response.event.AdminEventResponse;
 import ifmo.poster.monolith.dto.response.event.PublicEventDetailResponse;
 import ifmo.poster.monolith.dto.response.event.PublicEventListResponse;
 import ifmo.poster.monolith.enums.EventStatus;
+import ifmo.poster.monolith.enums.Role;
+import ifmo.poster.monolith.security.RequireRoles;
 import ifmo.poster.monolith.service.EventService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
@@ -36,11 +38,13 @@ public class EventController {
 
     private final EventService eventService;
 
+    @RequireRoles({Role.ADMIN, Role.SUPERUSER})
     @PostMapping
     public ResponseEntity<AdminEventResponse> create(@Valid @RequestBody CreateEventRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(eventService.create(request));
     }
 
+    @RequireRoles({Role.ADMIN, Role.SUPERUSER})
     @PutMapping("/{id}")
     public AdminEventResponse update(
             @PathVariable Long id,
@@ -49,6 +53,7 @@ public class EventController {
         return eventService.update(id, request);
     }
 
+    @RequireRoles({Role.CENSOR, Role.ADMIN, Role.SUPERUSER})
     @PatchMapping("/{id}/moderate")
     public AdminEventResponse moderate(
             @PathVariable Long id,
@@ -77,6 +82,7 @@ public class EventController {
         return eventService.getPublicFeed(afterId, pageable);
     }
 
+    @RequireRoles({Role.ADMIN, Role.SUPERUSER})
     @GetMapping("/admin")
     public ResponseEntity<Page<AdminEventResponse>> getAdminPage(
             @RequestParam(required = false) EventStatus status,
@@ -94,6 +100,7 @@ public class EventController {
         return eventService.getPublicById(id);
     }
 
+    @RequireRoles({Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
     @GetMapping("/{id}/admin")
     public AdminEventResponse getAdminById(@PathVariable Long id) {
         return eventService.getAdminById(id);

@@ -2,6 +2,8 @@ package ifmo.poster.monolith.controller;
 
 import ifmo.poster.monolith.dto.request.event.CreateEventRegistrationRequest;
 import ifmo.poster.monolith.dto.response.event.EventRegistrationResponse;
+import ifmo.poster.monolith.enums.Role;
+import ifmo.poster.monolith.security.RequireRoles;
 import ifmo.poster.monolith.service.EventRegistrationService;
 import ifmo.poster.monolith.util.PageableUtils;
 import jakarta.validation.Valid;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/registrations")
 @RequiredArgsConstructor
+@RequireRoles({Role.USER, Role.ADMIN, Role.SUPERUSER, Role.CENSOR})
 public class EventRegistrationController {
 
     private final EventRegistrationService registrationService;
