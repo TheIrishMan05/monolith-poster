@@ -42,3 +42,11 @@ databaseChangeLog:
   - include:
       file: 011-create-event-registrations.yaml
       relativeToChangelogFile: true
+
+  - include:
+      file: 012-create-ticket-waitlist.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 013-create-notifications.yaml
+      relativeToChangelogFile: true

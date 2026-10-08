@@ -18,19 +18,34 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final EventRepository eventRepository;
     private final TicketTypeRepository ticketTypeRepository;
+    private final NotificationService notificationService;
+    private final int maxInventoryBatch;
+
+    public TicketService(
+            TicketRepository ticketRepository,
+            EventRepository eventRepository,
+            TicketTypeRepository ticketTypeRepository,
+            NotificationService notificationService,
+            @Value("${app.inventory.max-batch}") int maxInventoryBatch
+    ) {
+        this.ticketRepository = ticketRepository;
+        this.eventRepository = eventRepository;
+        this.ticketTypeRepository = ticketTypeRepository;
+        this.notificationService = notificationService;
+        this.maxInventoryBatch = maxInventoryBatch;
+    }
 
     @Transactional
     public TicketInventoryResponse createInventory(CreateTicketInventoryRequest request) {
@@ -52,6 +67,7 @@ public class TicketService {
         List<Ticket> created = new ArrayList<>();
 
         if (hasSeats) {
+            ensureBatchSize(request.getSeats().size());
             validateSeats(request.getSeats());
             if (request.getQuantity() != null
                     && request.getQuantity() != request.getSeats().size()) {
@@ -69,6 +85,7 @@ public class TicketService {
                 throw new BusinessException(
                         "Provide quantity (without seats) or a non-empty seats list");
             }
+            ensureBatchSize(request.getQuantity());
             for (int i = 0; i < request.getQuantity(); i++) {
                 created.add(ticketRepository.save(newTicket(event, ticketType)));
             }
@@ -79,6 +96,8 @@ public class TicketService {
                 ticketType.getId(),
                 TicketStatus.AVAILABLE
         );
+
+        notificationService.notifyTicketAvailability(event.getId(), ticketType.getId());
 
         return TicketInventoryResponse.builder()
                 .eventId(event.getId())
@@ -98,6 +117,13 @@ public class TicketService {
         }
         return ticketRepository.findByEventIdAndStatus(eventId, status, pageable)
                 .map(this::toResponse);
+    }
+
+    private void ensureBatchSize(int size) {
+        if (size > maxInventoryBatch) {
+            throw new BusinessException(
+                    "Batch size must be <= " + maxInventoryBatch);
+        }
     }
 
     private Ticket newTicket(Event event, TicketType ticketType) {

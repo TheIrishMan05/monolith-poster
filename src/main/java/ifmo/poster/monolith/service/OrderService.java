@@ -26,7 +26,9 @@ import ifmo.poster.monolith.repository.TicketTypeRepository;
 import ifmo.poster.monolith.repository.UserRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +46,7 @@ public class OrderService {
     private final TicketTypeRepository ticketTypeRepository;
     private final TicketRepository ticketRepository;
     private final FakePaymentService paymentService;
+    private final NotificationService notificationService;
 
     /**
      * Транзакция №1: заказ + позиции + билеты + оплата.
@@ -158,10 +161,18 @@ public class OrderService {
         }
 
         List<Ticket> tickets = ticketRepository.findByOrderItem_Order_Id(order.getId());
+        Set<String> notifiedKeys = new HashSet<>();
         for (Ticket ticket : tickets) {
             ticket.setStatus(TicketStatus.AVAILABLE);
             ticket.setOrderItem(null);
             ticketRepository.save(ticket);
+
+            Long eventId = ticket.getEvent().getId();
+            Long ticketTypeId = ticket.getTicketType().getId();
+            String key = eventId + ":" + ticketTypeId;
+            if (notifiedKeys.add(key)) {
+                notificationService.notifyTicketAvailability(eventId, ticketTypeId);
+            }
         }
 
         order.setStatus(OrderStatus.CANCELLED);
