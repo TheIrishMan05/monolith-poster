@@ -50,3 +50,7 @@ databaseChangeLog:
   - include:
       file: 013-create-notifications.yaml
       relativeToChangelogFile: true
+
+  - include:
+      file: 014-drop-registration-waitlist-status.yaml
+      relativeToChangelogFile: true
