@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -41,25 +40,25 @@ public class NotificationController {
     }
 
     @PostMapping("/{id}/read")
-    public NotificationResponse markRead(
+    public ResponseEntity<NotificationResponse> markRead(
             @PathVariable Long id,
             @RequestParam Long userId
     ) {
-        return notificationService.markRead(id, userId);
+        return ResponseEntity.ok(notificationService.markRead(id, userId));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
+    public ResponseEntity<Void> delete(
             @PathVariable Long id,
             @RequestParam Long userId
     ) {
         notificationService.delete(id, userId);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
-    public Map<String, Long> deleteAll(@RequestParam Long userId) {
+    public ResponseEntity<Map<String, Long>> deleteAll(@RequestParam Long userId) {
         long deleted = notificationService.deleteAllForUser(userId);
-        return Map.of("deleted", deleted);
+        return ResponseEntity.ok(Map.of("deleted", deleted));
     }
 }

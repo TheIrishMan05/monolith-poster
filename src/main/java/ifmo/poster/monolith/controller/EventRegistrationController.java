@@ -38,8 +38,8 @@ public class EventRegistrationController {
     }
 
     @GetMapping("/{id}")
-    public EventRegistrationResponse getById(@PathVariable Long id) {
-        return registrationService.getById(id);
+    public ResponseEntity<EventRegistrationResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(registrationService.getById(id));
     }
 
     @GetMapping
@@ -66,7 +66,7 @@ public class EventRegistrationController {
     }
 
     @PostMapping("/{id}/cancel")
-    public EventRegistrationResponse cancel(@PathVariable Long id) {
-        return registrationService.cancel(id);
+    public ResponseEntity<EventRegistrationResponse> cancel(@PathVariable Long id) {
+        return ResponseEntity.ok(registrationService.cancel(id));
     }
 }

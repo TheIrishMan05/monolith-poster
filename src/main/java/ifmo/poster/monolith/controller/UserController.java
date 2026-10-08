@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -36,10 +35,12 @@ public class UserController {
     public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }
+
     @GetMapping("/{id}")
-    public UserResponse getById(@PathVariable Long id) {
-        return userService.getById(id);
+    public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getById(id));
     }
+
     @GetMapping
     public ResponseEntity<Page<UserResponse>> getAll(
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
@@ -50,23 +51,26 @@ public class UserController {
         headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
         return ResponseEntity.ok().headers(headers).body(page);
     }
+
     @PatchMapping("/{id}")
-    public UserResponse update(
+    public ResponseEntity<UserResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request
     ) {
-        return userService.update(id, request);
+        return ResponseEntity.ok(userService.update(id, request));
     }
+
     @PatchMapping("/{id}/role")
-    public UserResponse updateRole(
+    public ResponseEntity<UserResponse> updateRole(
             @PathVariable Long id,
             @Valid @RequestBody UpdateRoleRequest request
     ) {
-        return userService.updateRole(id, request);
+        return ResponseEntity.ok(userService.updateRole(id, request));
     }
+
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
