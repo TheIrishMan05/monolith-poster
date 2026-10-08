@@ -30,17 +30,17 @@ class UserApiIntegrationTest extends AbstractIntegrationTest {
 
         Long userId = idFrom(createResult);
 
-        mockMvc.perform(get("/api/users/{id}", userId))
+        mockMvc.perform(asUser(get("/api/users/{id}", userId), userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("user_" + suffix + "@poster.test"));
 
-        mockMvc.perform(patch("/api/users/{id}", userId)
+        mockMvc.perform(asUser(patch("/api/users/{id}", userId)
                         .contentType(jsonContent())
-                        .content(json(Map.of("email", "new_" + suffix + "@poster.test"))))
+                        .content(json(Map.of("email", "new_" + suffix + "@poster.test"))), userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("new_" + suffix + "@poster.test"));
 
-        mockMvc.perform(get("/api/users").param("size", "10"))
+        mockMvc.perform(asAdmin(get("/api/users").param("size", "10")))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-Total-Count"))
                 .andExpect(jsonPath("$.content.length()", greaterThanOrEqualTo(1)));
