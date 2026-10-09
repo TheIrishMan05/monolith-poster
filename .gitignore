@@ -39,6 +39,4 @@ out/
 
 ### User Code ###
 .env
-.dockerignore
 .gitattributes
-HELP.md

@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /workspace
 
@@ -7,7 +7,9 @@ COPY gradle ./gradle
 
 COPY src ./src
 
-RUN chmod +x gradlew && ./gradlew --no-daemon clean bootJar -x test
+RUN sed -i 's/\r$//' gradlew \
+ && chmod +x gradlew \
+ && sh ./gradlew --no-daemon clean bootJar -x test
 
 
 FROM eclipse-temurin:21-jre-alpine

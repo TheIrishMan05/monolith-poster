@@ -1,0 +1,16 @@
+.git/
+.gitignore
+.idea/
+*.iml
+
+.gradle/
+build/
+
+.env
+.env.*
+!.env.example
+secrets/
+
+README.md
+docker-compose.override.yml
+compose.override.yml
